@@ -211,7 +211,7 @@ resource "aws_autoscaling_attachment" "asg_attachment_bar" {
 
 resource "aws_route53_record" "www" {
   zone_id = "${var.zone_id}"
-  name    = "${lookup(var.short_env, var.environment)}.${var.dso_domain}"
+  name    = "${var.owner}-${lookup(var.short_env, var.environment)}.${var.dso_domain}"
   type    = "A"
 
   alias {
