@@ -26,6 +26,7 @@ variable "arn_acme" {
 
 variable "environment" {
   description = "The name of the environment"
+  default = "development"
 }
 
 ############### Input from the LAB stack
@@ -36,7 +37,7 @@ variable "short_env" {
 
   default = {
     production = "jenkins"
-    development = "jenkins-dev"
+    development = "jenkins"
   }
 }
 
