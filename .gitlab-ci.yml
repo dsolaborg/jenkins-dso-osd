@@ -1,0 +1,73 @@
+# Official image for Hashicorp's Terraform. It uses light image which is Alpine
+# based as it is much lighter.
+#
+# Entrypoint is also needed as image by default set `terraform` binary as an
+# entrypoint.
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+# Default output file for Terraform plan
+variables:
+  PLAN: plan.tfplan
+  ENV: development
+  OWNER: tester
+  OWNER_EMAIL: test@test.com
+
+cache:
+  paths:
+    - .terraform
+
+before_script:
+  - terraform --version
+  - terraform init
+
+stages:
+  - validate
+  - build
+  - deploy_dev
+  - deploy_prod
+
+validate:
+  stage: validate
+  script:
+    - terraform validate -var 'environment=$ENV' -var 'owner=$OWNER' -var 'owner_email=$OWNER_EMAIL'
+
+plan:
+  stage: build
+  script:
+    - terraform plan -var 'environment=$ENV' -var 'owner=$OWNER' -var 'owner_email=$OWNER_EMAIL' -out=$PLAN
+  artifacts:
+    name: plan
+    paths:
+      - $PLAN
+
+# Separate apply job for manual launching Terraform as it can be destructive
+# action.
+apply:
+  stage: deploy_dev
+  environment:
+    name: development
+  script:
+    - terraform apply -var 'environment=$ENV' -var 'owner=$OWNER' -var 'owner_email=$OWNER_EMAIL' -input=false $PLAN
+  dependencies:
+    - plan
+  when: manual
+  only:
+    - develop
+
+# Separate apply job for manual launching Terraform as it can be destructive
+# action.
+apply:
+  stage: deploy_prod
+  environment:
+    name: production
+  script:
+    - terraform apply -var 'environment=$ENV' -var 'owner=$OWNER' -var 'owner_email=$OWNER_EMAIL' -input=false $PLAN
+  dependencies:
+    - plan
+  when: manual
+  only:
+    - master

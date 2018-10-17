@@ -1,0 +1,38 @@
+[
+  {
+    "name": "jenkins",
+    "image": "${repository_url}",
+    "cpu": 512,
+    "memory": 1024,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080
+      },
+      {
+        "containerPort": 50000,
+        "hostPort": 50000
+      }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "jenkins-home",
+        "containerPath": "/var/jenkins_home"
+      }
+    ],
+    "logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+      "awslogs-group": "${log_group_name}",
+      "awslogs-region": "${log_group_region}"
+    }
+  },
+  "environment": [
+    {
+      "name": "JAVA_OPTS",
+      "value": "-Djenkins.install.runSetupWizard=false -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m"
+    }
+  ]
+ }
+]
