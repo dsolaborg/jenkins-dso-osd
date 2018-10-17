@@ -46,7 +46,7 @@ resource "aws_autoscaling_group" "asg_ecs" {
   health_check_type = "EC2"
   health_check_grace_period = 300
   launch_configuration = "${aws_launch_configuration.lc_ecs.name}"
-  vpc_zone_identifier = "${var.public_subnets_prod}"
+  vpc_zone_identifier = "${var.public_subnets_dev}"
 
   lifecycle {
     create_before_destroy = true
@@ -120,7 +120,7 @@ resource "aws_lb" "front_end" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${lookup(var.sg_id, var.environment)}"]
-  subnets            = ["${var.public_subnets_prod}"]
+  subnets            = ["${var.public_subnets_dev}"]
 
   enable_deletion_protection = false
 
