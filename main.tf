@@ -119,7 +119,7 @@ resource "aws_lb" "front_end" {
   name               = "alb-${var.environment}-${var.owner}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["${lookup(var.sg_id, var.environment)}"]
+  security_groups    = ["${lookup(var.sg_id_alb, var.environment)}"]
   subnets            = ["${var.public_subnets_dev}"]
 
   enable_deletion_protection = false
