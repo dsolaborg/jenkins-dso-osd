@@ -60,6 +60,15 @@ variable "sg_id" {
   }
 }
 
+variable "sg_id_alb" {
+  type = "map"
+
+  default = {
+    production = "sg-04ae233d77045cf0b"
+    development = "sg-09cb03ed55daebf67"
+  }
+}
+
 variable "vpc_id" {
   type = "map"
 
